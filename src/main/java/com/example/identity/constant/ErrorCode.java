@@ -1,0 +1,21 @@
+package com.example.identity.constant;
+
+import lombok.Getter;
+
+@Getter
+public enum ErrorCode {
+    UNCATEGORIZED_EXCEPTION(500, "Uncategorized error"),
+    INVALID_KEY(400, "Invalid key provided"),
+    USER_EXISTED(409, "User already exists"),
+    USERNAME_INVALID(400, "Username must be at least 3 characters"),
+    PASSWORD_INVALID(400, "Password must be at least 8 characters");
+
+    ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    private final int code;
+    private final String message;
+
+}
