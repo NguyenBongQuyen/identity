@@ -6,6 +6,7 @@ import com.example.identity.dto.response.UserResponse;
 import com.example.identity.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,11 @@ import java.util.List;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public ApiResponse<UserResponse> create(@Valid @RequestBody UserRequest request) {

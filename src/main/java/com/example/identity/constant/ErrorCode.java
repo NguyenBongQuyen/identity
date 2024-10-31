@@ -8,7 +8,8 @@ public enum ErrorCode {
     INVALID_KEY(400, "Invalid key provided"),
     USER_EXISTED(409, "User already exists"),
     USERNAME_INVALID(400, "Username must be at least 3 characters"),
-    PASSWORD_INVALID(400, "Password must be at least 8 characters");
+    PASSWORD_INVALID(400, "Password must be at least 8 characters"),
+    USER_NOT_EXISTED(400, "User not exists");
 
     ErrorCode(int code, String message) {
         this.code = code;
