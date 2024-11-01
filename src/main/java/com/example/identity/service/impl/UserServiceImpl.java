@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(String id, UserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setId(id);
         userMapper.updateUser(user, request);
         user = userRepository.save(user);
