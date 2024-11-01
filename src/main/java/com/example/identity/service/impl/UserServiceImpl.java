@@ -1,6 +1,7 @@
 package com.example.identity.service.impl;
 
 import com.example.identity.constant.ErrorCode;
+import com.example.identity.constant.enums.Role;
 import com.example.identity.dto.request.UserRequest;
 import com.example.identity.dto.response.UserResponse;
 import com.example.identity.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -33,8 +35,12 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.mapToEntity(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user = userRepository.save(user);
 
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
+        user = userRepository.save(user);
         return userMapper.mapToResponse(user);
     }
 
