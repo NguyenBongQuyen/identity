@@ -37,11 +37,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
 
     @NonFinal
-    @Value("${jwt.signerKey}")
+    @Value("${jwt.signKey}")
     String signKey;
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws JOSEException {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        var token = generateToken(request.getUsername());
+        var token = this.generateToken(request.getUsername());
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
@@ -59,8 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
-    @Override
-    public String generateToken(String username) {
+    private String generateToken(String username) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
@@ -76,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return jwsObject.serialize();
         } catch (JOSEException e) {
             log.error("Cannot create token", e);
-            throw new RuntimeException(e);
+            throw new JOSEException(e);
         }
     }
 

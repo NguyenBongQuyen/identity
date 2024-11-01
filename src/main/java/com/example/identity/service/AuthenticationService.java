@@ -9,9 +9,7 @@ import com.nimbusds.jose.JOSEException;
 import java.text.ParseException;
 
 public interface AuthenticationService {
-    AuthenticationResponse authenticate(AuthenticationRequest request);
-
-    String generateToken(String username) throws RuntimeException;
+    AuthenticationResponse authenticate(AuthenticationRequest request) throws JOSEException;
 
     IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
 }
