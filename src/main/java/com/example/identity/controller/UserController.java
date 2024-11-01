@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +28,13 @@ public class UserController {
 
     @PostMapping
     public ApiResponse<UserResponse> create(@Valid @RequestBody UserRequest request) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.create(request));
-        return apiResponse;
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.create(request))
+                .build();
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')") //kiểm tra dựa vào tham số đầu vào
     public List<UserResponse> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Username: {}", authentication.getName());
@@ -40,8 +43,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PostAuthorize("returnObject.username == authentication.name") //kiểm tra dựa vào kết quả trả ra
     public UserResponse getUser(@PathVariable String id) {
         return userService.getUser(id);
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
     }
 
     @PutMapping("/{id}")
