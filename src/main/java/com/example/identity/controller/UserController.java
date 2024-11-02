@@ -34,7 +34,8 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')") //kiểm tra dựa vào tham số đầu vào
+//    @PreAuthorize("hasRole('ADMIN')") //kiểm tra dựa vào tham số đầu vào
+    @PreAuthorize("hasAuthority('GET_DATA')")
     public List<UserResponse> getUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Username: {}", authentication.getName());
