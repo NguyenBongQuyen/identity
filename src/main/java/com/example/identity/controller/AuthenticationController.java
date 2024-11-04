@@ -2,6 +2,7 @@ package com.example.identity.controller;
 
 import com.example.identity.dto.request.AuthenticationRequest;
 import com.example.identity.dto.request.IntrospectRequest;
+import com.example.identity.dto.request.LogoutRequest;
 import com.example.identity.dto.response.ApiResponse;
 import com.example.identity.dto.response.AuthenticationResponse;
 import com.example.identity.dto.response.IntrospectResponse;
@@ -38,5 +39,11 @@ public class AuthenticationController {
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
                 .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 }
