@@ -1,6 +1,6 @@
 package com.example.identity.configuration;
 
-import com.example.identity.constant.enums.Role;
+import com.example.identity.constant.enums.RoleEnum;
 import com.example.identity.entity.User;
 import com.example.identity.repository.UserRepository;
 import lombok.AccessLevel;
@@ -31,7 +31,7 @@ public class ApplicationInitConfig {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
                 var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
+                roles.add(RoleEnum.ADMIN.name());
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))

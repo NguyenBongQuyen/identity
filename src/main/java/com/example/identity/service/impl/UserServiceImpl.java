@@ -1,9 +1,10 @@
 package com.example.identity.service.impl;
 
 import com.example.identity.constant.ErrorCode;
-import com.example.identity.constant.enums.Role;
+import com.example.identity.constant.enums.RoleEnum;
 import com.example.identity.dto.request.UserRequest;
 import com.example.identity.dto.response.UserResponse;
+import com.example.identity.entity.Role;
 import com.example.identity.entity.User;
 import com.example.identity.exception.AppException;
 import com.example.identity.mapper.UserMapper;
@@ -13,6 +14,7 @@ import com.example.identity.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,18 +33,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse create(UserRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
-
         User user = userMapper.mapToEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-//        user.setRoles(roles);
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(RoleEnum.USER.name()).ifPresent(roles::add);
+        user.setRoles(roles);
 
-        user = userRepository.save(user);
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
         return userMapper.mapToResponse(user);
     }
 

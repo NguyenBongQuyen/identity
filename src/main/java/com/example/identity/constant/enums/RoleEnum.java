@@ -1,6 +1,6 @@
 package com.example.identity.constant.enums;
 
-public enum Role {
+public enum RoleEnum {
     ADMIN,
     USER
 }
